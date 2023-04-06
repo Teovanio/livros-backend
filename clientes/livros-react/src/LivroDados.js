@@ -29,16 +29,16 @@ function LivroDados() {
   var incluir = (evento) => {
     evento.preventDefault();
     var livro = new Livro();
-    livro.codigo = 0;
+    livro._id = null;
+    livro.codigo = "";
     livro.codEditora = codEditora;
     livro.titulo = titulo;
     livro.resumo = resumo;
     livro.autores = autores.split("\n");
-    console.log("livro", livro);
-    console.log("todos livros", controleLivro.obterLivros());
 
-    controleLivro.incluir(livro);
-    navigate("/");
+    controleLivro.incluir(livro).then(() => {
+      navigate("/");
+    });
   };
 
   var handleSetAutores = (evento) => {
@@ -54,48 +54,48 @@ function LivroDados() {
   };
 
   return (
-      <main className="estilo-dados">
-        <h1>Dados do Livro</h1>
-        <form onSubmit={incluir}>
-          <Form.Group className="mb-3 ">
-            <Form.Label>Título</Form.Label>
-            <Form.Control type="text" value={titulo} onChange={handleSetTitulo} />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Resumo</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={resumo}
-              onChange={handleSetResumo}
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Editora</Form.Label>
-            <Form.Select onChange={tratarCombo} value={codEditora}>
-              {opcoes.map((editora, i) => {
-                return (
-                  <option value={editora.value} key={i}>
-                    {editora.text}
-                  </option>
-                );
-              })}
-            </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Autores(1 por linha)</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={autores}
-              onChange={handleSetAutores}
-            />
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Salvar Dados
-          </Button>
-        </form>
-      </main>
+    <main className="estilo-dados">
+      <h1>Dados do Livro</h1>
+      <form onSubmit={incluir}>
+        <Form.Group className="mb-3 ">
+          <Form.Label>Título</Form.Label>
+          <Form.Control type="text" value={titulo} onChange={handleSetTitulo} />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Resumo</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={resumo}
+            onChange={handleSetResumo}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Editora</Form.Label>
+          <Form.Select onChange={tratarCombo} value={codEditora}>
+            {opcoes.map((editora, i) => {
+              return (
+                <option value={editora.value} key={i}>
+                  {editora.text}
+                </option>
+              );
+            })}
+          </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Autores(1 por linha)</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={autores}
+            onChange={handleSetAutores}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Salvar Dados
+        </Button>
+      </form>
+    </main>
   );
 }
 export default LivroDados;

@@ -1,4 +1,3 @@
-import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 import { Livro } from "../modelo/Livros";
 
 const baseURL = "http://localhost:3030/livros";
@@ -17,35 +16,27 @@ export class ControleLivros {
     livros = await fetch(baseURL)
       .then((result) => result.json())
       .then((livros) => {
-        return livros.map((livro) => {
-          return livro as Livro;
+        return livros.map((objeto: any) => {
+          return objeto as Livro;
         });
       });
 
     return livros;
   };
-  incluir = (obj: Livro) => {
-    let novoCodigo = 0;
-    this.obterLivros().forEach((item) => {
-      if (item.codigo > novoCodigo) {
-        novoCodigo = item.codigo;
-      }
+  incluir = async (obj: LivroMongo) => {
+    var x = JSON.stringify(obj);
+
+    fetch(baseURL, {
+      body: x,
+      method: "POST",
+      headers: { "content-type": "application/json" },
+    }).then((data) => {
+      console.log(data);
     });
-    novoCodigo++;
-    obj.codigo = novoCodigo;
-    livros.push(obj);
   };
   excluir = async (codigo: String) => {
     fetch(baseURL + "/" + codigo, {
       method: "DELETE",
-    }).then((result) => result.json());
-    console.log(livros);
-    const index = this.obterLivros().findIndex((item) => {
-      return item.codigo === codigo;
-    });
-    if (index !== -1) {
-      livros.splice(index, 1);
-    }
-    console.log(livros);
+    }).then(() => {});
   };
 }
