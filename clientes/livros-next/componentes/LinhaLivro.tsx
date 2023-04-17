@@ -18,7 +18,7 @@ export const LinhaLivro: React.FC<LinhaLivroProps> = (props) => {
       <td>
         {props.livro.titulo}
         <br />
-        <button
+        <button className="btn btn-danger"
           onClick={() => {
             props.excluir();
           }}

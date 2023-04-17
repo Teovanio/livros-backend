@@ -2,17 +2,14 @@ import type { NextPage } from "next";
 import React, { useState } from "react";
 import { ControleEditora } from "../../classes/controle/ControleEditora";
 import { Editora } from "../../classes/modelo/Editora";
-import { Livro } from "../../classes/modelo/Livros";
-import { useNavigate } from "react-router-dom";
 import styles from "../styles/Home.module.css";
 import Head from "next/head";
 import { Menu } from "../../componentes/Menu";
 import { Button, Form, FormLabel } from "react-bootstrap";
 import { useRouter } from "next/router";
+import { ControleLivros, LivroMongo } from "../../classes/controle/ControleLivros";
 const LivroDados: NextPage = () => {
   const controleEditora = new ControleEditora();
-
-  const baseURL = "http://localhost:3000/api/livros";
 
   const opcoes = controleEditora.getEditoras().map((editora: Editora) => {
     return { value: editora.codEditora, text: editora.nome };
@@ -23,6 +20,7 @@ const LivroDados: NextPage = () => {
   const [autores, setAutores] = useState("");
   const [codEditora, setCodEditora] = useState(opcoes[0].value);
   const router = useRouter();
+  const controleLivros: ControleLivros = new ControleLivros();
 
   const tratarCombo = (evento: React.ChangeEvent<HTMLSelectElement>) => {
     setCodEditora(Number(evento.target.value));
@@ -30,29 +28,16 @@ const LivroDados: NextPage = () => {
 
   const incluir = (evento: React.FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
-    const livro = new Livro();
-    livro.codigo = 0;
+    const livro = new LivroMongo();
+    livro._id = null;
     livro.codEditora = codEditora;
     livro.titulo = titulo;
     livro.resumo = resumo;
     livro.autores = autores.split("\n");
 
-    incluirLivro(livro);
-    router.push("/LivroLista");
-  };
-
-  const incluirLivro = (livro: Livro) => {
-    return fetch(baseURL, {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(livro),
+    controleLivros.incluir(livro).then(() => {
+      router.push("/LivroLista");
     })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        return data;
-      });
   };
 
   const handleSetAutores = (evento: React.ChangeEvent<any>) => {
@@ -76,7 +61,7 @@ const LivroDados: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Menu></Menu>
-      <main>
+      <main className="estilo-dados">
         <h1>Dados do Livro</h1>
         <form onSubmit={incluir}>
           <Form.Group className="mb-3 ">

@@ -1,7 +1,7 @@
 export class Livro {
-  codigo: number;
+  codigo: String | null;
   codEditora: number;
-  titulo: string;
-  resumo: string;
-  autores: string[];
+  titulo: String;
+  resumo: String;
+  autores: String[];
 }

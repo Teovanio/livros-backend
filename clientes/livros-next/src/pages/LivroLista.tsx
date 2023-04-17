@@ -1,51 +1,30 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import { Livro } from "../../classes/modelo/Livros";
+
 import { LinhaLivro } from "../../componentes/LinhaLivro";
 import { Menu } from "../../componentes/Menu";
 import styles from "../styles/Home.module.css";
+import { ControleLivros, LivroMongo } from "../../classes/controle/ControleLivros";
+
 
 const LivroLista: NextPage = () => {
-  const baseURL = "http://localhost:3000/api/livros";
-
   const [carregado, setCarregado] = useState(false);
-  const [livros, setLivros] = useState<Array<Livro>>([]);
+  const [livros, setLivros] = useState<Array<LivroMongo>>([]);
+  
 
   useEffect(() => {
-    obter().then((data) => {
+    const controleLivros: ControleLivros = new ControleLivros();
+    controleLivros.obterLivros().then((data) => {
       setLivros(data);
+      setCarregado(true);
     });
   }, [carregado]);
 
-  const obter = () => {
-    return fetch(baseURL, {
-      method: "GET",
-      headers: { Accept: "application/json" },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setCarregado(true);
-        return data;
-      });
-  };
-
-  const excluir = (codigo: Number) => {
-    excluirLivro(codigo).then(() => {
+  const excluir = (codigo: String) => {
+    const controleLivros: ControleLivros = new ControleLivros();
+    controleLivros.excluir(codigo).then(() => {
       setCarregado(false);
-    });
-  };
-
-  const excluirLivro = (codigo: Number) => {
-    return fetch(baseURL + "/" + codigo.toString(), {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-      },
-    }).then((response) => {
-      return response.json();
     });
   };
 
@@ -58,21 +37,31 @@ const LivroLista: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Menu></Menu>
-      <main>
+      <main className="estilo-dados">
         <h1>Catálogo de Livro</h1>
-        <table>
+        <table className=" table table-striped table-bordered table-hover">
+        <thead className="table-dark">
+          <tr>
+            <th>titulo</th>
+            <th>resumo</th>
+            <th>editora</th>
+            <th>autores</th>
+          </tr>
+        </thead>
+          <tbody>
           {livros &&
-            livros.map((livro) => {
+            livros.map((livro, index) => {
               return (
                 <LinhaLivro
-                  key={livro.codigo}
+                  key={index}
                   excluir={() => {
-                    excluir(livro.codigo);
+                    excluir(livro._id!);
                   }}
                   livro={livro}
                 ></LinhaLivro>
               );
             })}
+          </tbody>
         </table>
       </main>
     </div>
